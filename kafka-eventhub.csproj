@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>kafka_eventhub</RootNamespace>
+    <RootNamespace>DataFellows.KafkaConsumer</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
