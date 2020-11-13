@@ -52,15 +52,9 @@ namespace DataFellows.KafkaConsumer
                         string meta = "timestamp:" + consumeResult.Message.Timestamp.UnixTimestampMs.ToString() + " topic:" + consumeResult.Topic + " partition:" + consumeResult.Partition.Value.ToString() + " offset:" + consumeResult.Offset.Value;
                         LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Received: {meta}");
 
-                        try
-                        {
-                            await eventHubs[consumeResult.Topic].SendToEventHubAsync(consumeResult.Message.Value);
-                            LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Processed: {meta}");
-                        }
-                        catch (Exception exception)
-                        {
-                            LogError($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} There was an error storing the Kafka message. {consumeResult.TopicPartitionOffset.ToString()}\r\n{exception.ToString()}");
-                        }
+                        await eventHubs[consumeResult.Topic].SendToEventHubAsync(consumeResult.Message.Value);
+                        consumer.StoreOffset(consumeResult);
+                        LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Processed: {meta}");
                     }
                 }
                 catch (OperationCanceledException)
@@ -77,9 +71,11 @@ namespace DataFellows.KafkaConsumer
             {
                 BootstrapServers = kafkaConfiguration.BootstrapServers,
                 GroupId = kafkaConfiguration.GroupId,
-                ClientId = Environment.MachineName,
+                ClientId = Environment.MachineName + "1",
                 AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnableSslCertificateVerification = false
+                EnableSslCertificateVerification = false,
+                EnableAutoCommit = true,
+                EnableAutoOffsetStore = false
             };
 
             if (!string.IsNullOrEmpty(kafkaConfiguration.SslCertificateLocation) && !string.IsNullOrEmpty(kafkaConfiguration.SslKeyLocation))
