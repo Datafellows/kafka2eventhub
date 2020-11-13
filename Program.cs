@@ -57,10 +57,9 @@ namespace DataFellows.KafkaConsumer
                             await eventHubs[consumeResult.Topic].SendToEventHubAsync(consumeResult.Message.Value);
                             LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Processed: {meta}");
                         }
-                        catch (Exception)
+                        catch (Exception exception)
                         {
-
-                            LogError($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} There was an error storing the Kafka message. {consumeResult.TopicPartitionOffset.ToString()}");
+                            LogError($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} There was an error storing the Kafka message. {consumeResult.TopicPartitionOffset.ToString()}\r\n{exception.ToString()}");
                         }
                     }
                 }
