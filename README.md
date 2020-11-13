@@ -12,10 +12,26 @@ The configuration file is a json file where you can set several variables.
 ``` json
 {
     "kafka": {
-        
+        "groupId": "kafka-consumer",
+        "bootstrapServers": "localhost:9092",
+        "topics": [],
+        "sslCertificateLocation": null,
+        "sslKeyLocation": null
     },
     "eventHub": {
         "connectionString": "<Event Hub connectionstring>"
     }
 }
 ```
+
+By default the configuration file is searched within the current directory. You can override this by providing a path to a json file on the promt. Eg. ``` kafka2eventhub <pathtoconfig.json>```. Another option is to pass it as an environment variable named: DF_CONFIG. Configurations set by environment variables always take precedence over the command prompt or configuration file.
+
+## Environment variables
+Some settings can be set through environment variables.
+- DF_BOOTSTRAPSERVERS: To set bootstrapservers.
+- DF_GROUPID: To set the groupid.
+- DF_TOPICS: A comma seperated list of topics.
+- DF_EVENTHUB: The connection to Azure Event Hub.
+
+## Docker
+There is a Docker image available at <https://hub.docker.com/r/datafellows/kafka2eventhub>.
