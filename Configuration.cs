@@ -21,15 +21,16 @@ namespace DataFellows.KafkaConsumer
 
 
             string config = "";
+            
+            Console.WriteLine("{0} {1}", Directory.GetCurrentDirectory(), "config.json");
+            if (Directory.GetFiles(Directory.GetCurrentDirectory(), "config.json", new EnumerationOptions() {MatchCasing = MatchCasing.PlatformDefault}).Length > 0)
+                config = Path.Join(Directory.GetCurrentDirectory(), "config.json");
+
             if (args.Length > 0 && args[0].ToUpperInvariant().EndsWith(".JSON"))
                 config = args[0];
             else
             if (Environment.GetEnvironmentVariable("DF_CONFIG") != null)
                 config = Environment.GetEnvironmentVariable("DF_CONFIG");
-
-            Console.WriteLine("{0} {1}", Directory.GetCurrentDirectory(), "config.json");
-            if (Directory.GetFiles(Directory.GetCurrentDirectory(), "config.json", new EnumerationOptions() {MatchCasing = MatchCasing.PlatformDefault}).Length > 0)
-                config = Path.Join(Directory.GetCurrentDirectory(), "config.json");
 
             if (!string.IsNullOrEmpty(config))
                 DeserializeConfigFile(config);
