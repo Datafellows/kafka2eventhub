@@ -16,7 +16,7 @@ namespace DataFellows.KafkaConsumer
 
             foreach (string topic in configuration.Kafka.Topics)
             {
-                eventHubs.Add(topic, new AzureEventHubService(configuration.EventHub.ConnectionString, topic));
+                eventHubs.Add(topic, new AzureEventHubService(configuration.EventHub, topic));
             }
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
