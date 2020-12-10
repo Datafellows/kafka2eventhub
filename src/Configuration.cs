@@ -60,8 +60,11 @@ namespace DataFellows.KafkaConsumer
             if (Environment.GetEnvironmentVariable("DF_TOPICS") != null)
                 _configuration.Kafka.Topics = Environment.GetEnvironmentVariable("DF_TOPICS").Split(',');
 
-            if (Environment.GetEnvironmentVariable("DF_EVENTHUB") != null)
-                _configuration.EventHub.ConnectionString = Environment.GetEnvironmentVariable("DF_EVENTHUB");                
+            if (Environment.GetEnvironmentVariable("DF_EVENTHUBCONNECTION") != null)
+                _configuration.EventHub.ConnectionString = Environment.GetEnvironmentVariable("DF_EVENTHUBCONNECTION");
+
+            if (Environment.GetEnvironmentVariable("DF_EVENTHUBNAMESPACE") != null)
+                _configuration.EventHub.EventHubNamespace = Environment.GetEnvironmentVariable("DF_EVENTHUBNAMESPACE");
         }
 
         public override string ToString()

@@ -1,5 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1
-
-COPY bin/Release/netcoreapp3.1/publish/ app/
+FROM mcr.microsoft.com/dotnet/runtime:5.0
+COPY src/bin/Release/net5.0/publish/ app/
 WORKDIR /app
-ENTRYPOINT ["dotnet", "kafka-eventhub.dll"]
+ENTRYPOINT ["dotnet", "kafka2eventhub.dll"]

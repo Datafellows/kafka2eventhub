@@ -31,18 +31,18 @@ namespace DataFellows.KafkaConsumer
             };
 
             await ProcessStreamAsync(configuration, cancellationTokenSource);
-           LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Consumer closed.");
+           LogMessage("Consumer closed.");
         }
 
         static async Task ProcessStreamAsync(Configuration configuration, CancellationTokenSource cancellationTokenSource)
         {
-            using (var consumer = new ConsumerBuilder<Ignore, byte[]>(getConsumerConfiguration(configuration.Kafka))
-                        .SetErrorHandler((_, e) => LogError($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Error: {e.Reason}"))
+            using (var consumer = new ConsumerBuilder<Ignore, byte[]>(GetConsumerConfiguration(configuration.Kafka))
+                        .SetErrorHandler((_, e) => LogError($"Error: {e.Reason}"))
                         .Build())
             {
                 consumer.Subscribe(configuration.Kafka.Topics);
-                LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Subscribing to topics: {String.Join(',', configuration.Kafka.Topics)} on {configuration.Kafka.BootstrapServers}.");
-                LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Consumer ready. Waiting for events");
+                LogMessage($"Subscribing to topics: {String.Join(',', configuration.Kafka.Topics)} on {configuration.Kafka.BootstrapServers}.");
+                LogMessage("Consumer ready. Waiting for events");
 
                 try
                 {
@@ -50,28 +50,28 @@ namespace DataFellows.KafkaConsumer
                     {
                         var consumeResult = consumer.Consume(cancellationTokenSource.Token);
                         string meta = "timestamp:" + consumeResult.Message.Timestamp.UnixTimestampMs.ToString() + " topic:" + consumeResult.Topic + " partition:" + consumeResult.Partition.Value.ToString() + " offset:" + consumeResult.Offset.Value;
-                        LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Received: {meta}");
+                        LogMessage($"Received: {meta}");
 
                         await eventHubs[consumeResult.Topic].SendToEventHubAsync(consumeResult.Message.Value);
                         consumer.StoreOffset(consumeResult);
-                        LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Processed: {meta}");
+                        LogMessage($"Processed: {meta}");
                     }
                 }
                 catch (OperationCanceledException)
                 {
-                    LogMessage($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} Closing consumer");
+                    LogMessage("Closing consumer");
                     consumer.Close();
                 }
             }
         }
 
-        static ConsumerConfig getConsumerConfiguration(KafkaConfiguration kafkaConfiguration)
+        static ConsumerConfig GetConsumerConfiguration(KafkaConfiguration kafkaConfiguration)
         {
             ConsumerConfig config = new ConsumerConfig
             {
                 BootstrapServers = kafkaConfiguration.BootstrapServers,
                 GroupId = kafkaConfiguration.GroupId,
-                ClientId = Environment.MachineName + "1",
+                ClientId = Environment.MachineName,
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 EnableSslCertificateVerification = false,
                 EnableAutoCommit = true,
@@ -90,12 +90,12 @@ namespace DataFellows.KafkaConsumer
 
         static void LogMessage(string message)
         {
-            Console.WriteLine($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} {message}");
+            Console.WriteLine($"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ssZ} {message}");
         }
 
         static void LogError(string message)
         {
-            Console.Error.WriteLine($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")} {message}");
+            Console.Error.WriteLine($"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ssZ} {message}");
         }
     }
 }
